@@ -1,6 +1,6 @@
 package com.nauta.ale.ipwidget;
 
-/**
+/*
  * Created by ale on 23/11/15.
  */
 
@@ -73,8 +73,12 @@ public class NetInfo
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        for (InterfaceAddress address : netInt.getInterfaceAddresses()) {
-            netMask = address.getNetworkPrefixLength();
+        try {
+            for (InterfaceAddress address : netInt.getInterfaceAddresses()) {
+                netMask = address.getNetworkPrefixLength();
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
         Integer netMaskInt = 0xffffffff << (32 - netMask);
         return String.format("%d.%d.%d.%d",
