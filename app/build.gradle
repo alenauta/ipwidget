@@ -3,14 +3,13 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 21
     buildToolsVersion '23.0.2'
-
     defaultConfig {
         multiDexEnabled true
         applicationId "com.nauta.ale.ipwidget"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 5
+        versionName '1.0.4'
 
     }
     buildTypes {
@@ -18,12 +17,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             apply from: "../artifacts.gradle"
-           }
+        }
+    }
+    productFlavors {
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:support-v4:21.0.3'
 }

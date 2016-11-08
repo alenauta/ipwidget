@@ -10,7 +10,11 @@ import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 
+import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
@@ -24,6 +28,7 @@ public class NetInfo
 {
     private ConnectivityManager connManager = null;
     private WifiManager wifiManager = null;
+    private TelephonyManager telManager = null;
     private WifiInfo wifiInfo = null;
     private DhcpInfo dhcpInfo = null;
     private NetworkInterface netInt = null;
@@ -33,9 +38,28 @@ public class NetInfo
     {
         connManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        telManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
         dhcpInfo = wifiManager.getDhcpInfo();
 
+    }
+
+    public String getHostname(String defValue) {
+        try {
+            Method getString = Build.class.getDeclaredMethod("getString", String.class);
+            getString.setAccessible(true);
+            return getString.invoke(null, "net.hostname").toString();
+        } catch (Exception ex) {
+            return defValue;
+        }
+    }
+
+    public String getCarrier() {
+        if (null == telManager)
+            return "";
+
+        String carrier = telManager.getNetworkOperatorName();
+        return carrier;
     }
 
     public String getNetMask() {
@@ -178,7 +202,7 @@ public class NetInfo
             {
                 netinterface = enumnet.nextElement();
 
-                //System.out.println("netinterface" + netinterface.toString());
+//                Log.d("netinfo","netinterface " + netinterface.toString());
 
                 for (Enumeration<InetAddress> enumip = netinterface.getInetAddresses();
                      enumip.hasMoreElements();)
@@ -189,7 +213,7 @@ public class NetInfo
                     {
                         ipaddress = inetAddress.getHostAddress();
 
-                        //System.out.println("ipaddress" + ipaddress);
+//                        Log.d("netinfo","ipaddress " + ipaddress);
 
                         break;
                     }

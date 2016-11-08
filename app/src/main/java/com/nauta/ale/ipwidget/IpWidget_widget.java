@@ -18,7 +18,7 @@ import static android.net.ConnectivityManager.TYPE_WIFI;
  */
 public class IpWidget_widget extends AppWidgetProvider {
 
-    public static String APPWIDGET_UPDATE = "com.nauta.IpWidget.APPWIDGET_UPDATE";
+    public static String APPWIDGET_UPDATE = "com.nauta.ale.IpWidget.APPWIDGET_UPDATE";
     public static String CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
     public static String WIFI_STATE_CHANGED = "android.net.wifi.WIFI_STATE_CHANGED";
     public static String TAG = "IpWidget";
@@ -68,6 +68,12 @@ public class IpWidget_widget extends AppWidgetProvider {
         super.onReceive(context, intent);
         if (APPWIDGET_UPDATE.equals(intent.getAction()) || CONNECTIVITY_CHANGE.equals(intent.getAction()) || WIFI_STATE_CHANGED.equals(intent.getAction())) {
 
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ip_widget_widget);
@@ -75,7 +81,9 @@ public class IpWidget_widget extends AppWidgetProvider {
 
             NetInfo netInfo = new NetInfo(context);
             CharSequence widgetText = netInfo.getIPAddress();
+            Log.d(TAG, netInfo.getIPAddress());
             Log.d(TAG, netInfo.getWiFiSSID());
+            Log.d(TAG, netInfo.getCarrier());
             Log.d(TAG, netInfo.getWiFiMACAddress());
             Log.d(TAG, netInfo.getGateway());
             Log.d(TAG, netInfo.getNetMask());
@@ -89,11 +97,12 @@ public class IpWidget_widget extends AppWidgetProvider {
 
             if (widgetText != "<no ip address>") {
                 if (netInfo.getCurrentNetworkType() == TYPE_WIFI) {
-                    String text = "Connected to: " + netInfo.getWiFiSSID() + "\n" + "Link Speed: " + netInfo.getLinkSpeed() + "\n" + "Netmask: " + netInfo.getNetMask() + "\n" + "Gateway: " + netInfo.getGateway() + "\n" + "Dns1: " + netInfo.getDns().get(0) + "\n" + "Dns2: " + netInfo.getDns().get(1);
-                    Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+                    String text = "Connected to: " + netInfo.getWiFiSSID() + "\n" + "Link Speed: " + netInfo.getLinkSpeed() + "\n" + "Hostname: " + netInfo.getHostname("hostname") + "\n" + "Netmask: " + netInfo.getNetMask() + "\n" + "Gateway: " + netInfo.getGateway() + "\n" + "Dns1: " + netInfo.getDns().get(0) + "\n" + "Dns2: " + netInfo.getDns().get(1);
+                    if (APPWIDGET_UPDATE.equals(intent.getAction())) Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+                    widgetText = netInfo.getWifiIpAddress();
                 } else if (netInfo.getCurrentNetworkType() == TYPE_MOBILE){
-                    String text = "Netmask: " + netInfo.getNetMask();
-                    Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+                    String text = "Connected to: " + netInfo.getCarrier() + "\n" + "Netmask: " + netInfo.getNetMask() + "\n" + "Hostname: " + netInfo.getHostname("hostname");
+                    if (APPWIDGET_UPDATE.equals(intent.getAction())) Toast.makeText(context, text, Toast.LENGTH_LONG).show();
                 }
             }
 

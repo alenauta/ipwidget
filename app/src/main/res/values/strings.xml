@@ -2,4 +2,8 @@
     <string name="app_name">IpWidget</string>
     <string name="appwidget_text">IpWidget</string>
     <string name="add_widget">Add widget</string>
+
+    <string name="title_activity_ipwidget_splashscreen">IpWidget</string>
+    <string name="splash_button">OK</string>
+    <string name="splash_content">First, touch and hold an open space on your home screen. You’ll see an option at the bottom of the screen to view the widgets drawer, which is where they dwell until summoned for duty.</string>
 </resources>
